@@ -7,7 +7,7 @@ use base 'Class::Singleton';
 
 use Nick::Error;
 
-our( %DEFAULTS, $AUTOLOAD, @LEVELS, %METHODS );
+our( %DEFAULTS, $AUTOLOAD, @LEVELS, %METHODS, $OUTPUT_METHOD );
 
 BEGIN {
     $| = 1;
@@ -58,7 +58,7 @@ sub set_type_handler {
 }
 
 sub reset_output_method {
-    $_[0]{'output_method'} = sub {
+    $OUTPUT_METHOD = sub {
         print @_;
     };
 }
@@ -68,7 +68,7 @@ sub set_output_method {
         or Nick::Error -> throw(
             'Handler for output should be a callback'
         );
-    $_[0]{'output_method'} = $_[1];
+    $OUTPUT_METHOD = $_[1];
 }
 
 sub _make_output_handler {
@@ -107,7 +107,7 @@ sub _make_output_handler {
             : '[' . uc( $type ) . ']'
         );
         return sub {
-            &{ $$self{'output_method'} }(
+            &$OUTPUT_METHOD(
                 &$output(
                     $header
                     ? ( $header, @_ )
