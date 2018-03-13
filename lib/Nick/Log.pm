@@ -19,6 +19,101 @@ BEGIN {
     @LEVELS = qw( debug info log warning error );
 }
 
+=pod
+
+=head1 NAME
+
+Nick::Log - General purpose logging module.
+
+=head1 SYNOPSIS
+
+    use Nick::Log
+
+    my $log = Nick::Log -> instance();
+
+    $log -> info( 'info message' );
+    $log -> error( 'error message' );
+
+=head1 DESCRIPTION
+
+A singleton logging module with optional process id, date and output overide options.
+
+=head1 METHODS
+
+=head2 instance()
+
+Nick::Log instance constructor.
+
+All parameters are optional.
+
+    $log = Nick::Log -> instance(
+        # entries are terminated with a newline
+        # default:1
+        'nl' => 1,
+        # entries copntain a [date]
+        # default:1
+        'date' => 1,
+        # entries copntain a [process_id]
+        # default:0
+        'process' => 0
+    );
+
+=head2 debug() info() log() warning() error()
+
+Create a log entry at the level of the method name used.
+
+    $log -> info( 'info message' );
+    $log -> info( 'info', 'message' );
+
+Methods other than B<info()> and B<log()> will include a B<[METHOD]> section.
+
+The arguments will be joined with a space as the log body.
+
+If the last argument is a reference to a array, the strings B<no_nl>, B<no_date> or B<no_process> will suppress those options for this log.
+
+    $log -> info( 'processing...', [ 'no_nl' ] );
+    $log -> info( ' done' );
+
+=head2 set_type_handler()
+
+Set a callback to handle a specific log level handler.
+
+    $log -> set_type_handler(
+        'debug' => sub { warn $_[0]; }
+    );
+
+=head2 reset_handlers()
+
+Reset all log level handlers.
+
+=head2 set_output_method()
+
+Set the output callback for all log levels.
+
+    $log -> set_output_method(
+        sub { print $_[0]; }
+    );
+
+=head2 reset_output_method()
+
+Reset output callback for all log levels.
+
+=head2 options()
+
+Persistently set an option value.
+
+See B<instance()> method for available options.
+
+    $log -> options( 'process' => 1 );
+
+=head2 copy_to_file()
+
+Echo all log entries to a file.
+
+    $log -> copy_to_file( '/tmp/log.txt' );
+
+=cut
+
 sub _new_instance {
     my( $class, %set ) = @_;
     for ( keys %DEFAULTS ) {
