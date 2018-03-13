@@ -7,7 +7,7 @@ use base 'Class::Singleton';
 
 use Nick::Error;
 
-our %DEFAULTS;
+our( %DEFAULTS, $AUTOLOAD, @LEVELS, %METHODS );
 
 BEGIN {
     $| = 1;
@@ -16,6 +16,7 @@ BEGIN {
         date    1
         process 0
     );
+    @LEVELS = qw( debug info log warning error );
 }
 
 sub _new_instance {
@@ -31,55 +32,19 @@ sub _new_instance {
     return $self;
 }
 
-sub log {
-    shift() -> _output( 'log', @_ );
-    return 1;
-}
-
-sub info {
-    shift() -> _output( 'info', @_ );
-    return 1;
-}
-
-sub debug {
-    shift() -> _output( 'debug', @_ );
-    return 1;
-}
-
-sub error {
-    shift() -> _output( 'error', @_ );
-    return undef;
-}
-
-sub warning {
-    shift() -> _output( 'warning', @_ );
-    return undef;
-}
-
-sub _output {
-    my $self = shift;
-    my $type = shift;
-    &{ $$self{$type} }( @_ );
+sub AUTOLOAD {
+    my( $self, @msg ) = @_;
+    exists( $METHODS{$AUTOLOAD} )
+        and &{ $METHODS{$AUTOLOAD} }( @msg );
 }
 
 sub reset_handlers {
-    my $self = shift;
-    for my $type (
-        qw( log info debug warning error )
-    ) {
-        $$self{$type} = &{
-            $$self{'output_handler'}
-        }( $type );
+    my( $self ) = @_;
+    my $handler = $$self{'output_handler'};
+    my $prefix = ref( $self ) . '::';
+    for ( @LEVELS ) {
+        $METHODS{ $prefix . $_ } = &$handler( $_ );
     }
-    my @date;
-    $$self{'date'} = sub {
-        @date = ( localtime time )[ 3, 4, 5, 2, 1, 0 ];
-        $date[1] ++;
-        $date[2] %= 100;
-        return sprintf(
-            '[%02d/%02d/%02d %02d:%02d:%02d] ', @date
-        );
-    };
 }
 
 sub set_type_handler {
@@ -106,7 +71,15 @@ sub set_output_method {
 
 sub _make_output_handler {
     my $self = shift;
-    my( $nl, $date, $process, %opt );
+    my( $nl, $date, $process, %opt, @date );
+    my $date_sub = sub {
+        @date = ( localtime time )[ 3, 4, 5, 2, 1, 0 ];
+        $date[1] ++;
+        $date[2] %= 100;
+        return sprintf(
+            '[%02d/%02d/%02d %02d:%02d:%02d] ', @date
+        );
+    };
     my $output = sub {
         ( $nl, $date, $process ) = @DEFAULTS{ qw( nl date process ) };
         if (
@@ -118,7 +91,7 @@ sub _make_output_handler {
             $process = 0 if exists( $opt{'no_process'} );
         }
         return join( '',
-            ( $date ? &{ $$self{'date'} }() : () ),
+            ( $date ? &$date_sub() : () ),
             ( $process ? "[$$] " : () ),
             join( ' ', @_ ),
             ( $nl ? "\n" : () )
