@@ -52,7 +52,9 @@ sub set_type_handler {
         or Nick::Error -> throw(
             "Handler for type '$_[1]' should be a callback"
         );
-    $_[0] -> {$_[1]} = $_[2];
+    $METHODS{
+        ref( $_[0] ) . '::' . $_[1]
+    } = $_[2];
 }
 
 sub reset_output_method {

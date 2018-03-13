@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More 'tests' => 4;
+use Test::More 'tests' => 5;
 
 our( $LOG, $GOT );
 
@@ -26,6 +26,14 @@ is $GOT => 'test log';
 $LOG-> error( 'test error' );
 is $GOT => '[ERROR] test error';
 
+$LOG -> set_type_handler(
+    'debug' => sub {
+        $GOT = 'prefix:' . $_[0];
+    }
+);
+$LOG -> debug( 'test' );
+is $GOT => 'prefix:test';
+
 $LOG -> options( 'process' => 1 );
-$LOG-> log( 'test process' );
+$LOG -> log( 'test process' );
 is $GOT => "[$$] test process";
