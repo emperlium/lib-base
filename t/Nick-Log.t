@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More 'tests' => 5;
+use Test::More 'tests' => 7;
 
 our( $LOG, $GOT );
 
@@ -20,11 +20,15 @@ $LOG -> set_output_method(
     }
 );
 
-$LOG-> log( 'test log' );
-is $GOT => 'test log';
+my $retval;
 
-$LOG-> error( 'test error' );
+$retval = $LOG-> log( 'test log' );
+is $GOT => 'test log';
+is $retval => 1;
+
+$retval = $LOG-> error( 'test error' );
 is $GOT => '[ERROR] test error';
+is $retval => undef;
 
 $LOG -> set_type_handler(
     'debug' => sub {

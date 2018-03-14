@@ -74,6 +74,8 @@ If the last argument is a reference to a array, the strings B<no_nl>, B<no_date>
     $log -> info( 'processing...', [ 'no_nl' ] );
     $log -> info( ' done' );
 
+Methods B<warning()> and B<error()> return undef, all others return 1.
+
 =head2 set_type_handler()
 
 Set a callback to handle a specific log level handler.
@@ -129,8 +131,11 @@ sub _new_instance {
 
 sub AUTOLOAD {
     my( $self, @msg ) = @_;
-    exists( $METHODS{$AUTOLOAD} )
-        and &{ $METHODS{$AUTOLOAD} }( @msg );
+    return(
+        exists( $METHODS{$AUTOLOAD} )
+        ? &{ $METHODS{$AUTOLOAD} }( @msg )
+        : undef
+    );
 }
 
 sub reset_handlers {
@@ -208,6 +213,11 @@ sub _make_output_handler {
                     ? ( $header, @_ )
                     : @_
                 )
+            );
+            return(
+                $type eq 'error' || $type eq 'warning'
+                ? undef
+                : 1
             );
         };
     };
