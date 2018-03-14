@@ -9,6 +9,74 @@ BEGIN {
     $VERSION = '1.00';
 }
 
+=pod
+
+=head1 NAME
+
+Nick::StandardBase - Commonly used methods to be inherited.
+
+=head1 SYNOPSIS
+
+    use base 'Nick::StandardBase';
+
+    my $uri = main -> eval_require( 'URI' ) -> new();
+    main -> error( 'error message' );
+    main -> throw( 'fatal error' );
+
+=head1 METHODS
+
+=head2 debug() info() log() error()
+
+Calls the L<Nick::Log> methods of the same name.
+
+    Nick::StandardBase -> info( 'info message' );
+
+=head2 debug_dump()
+
+Dumps arguments with L<Data::Dumper> and outputs result in L<Nick::Log> debug.
+
+    Nick::StandardBase -> debug_dump( $var1, $var2 );
+
+=head2 simple_dump()
+
+Dumps arguments with L<Nick::SimpleDumper> and returns result.
+
+    print Nick::StandardBase -> simple_dump( $var1, $var2 ), "\n";
+
+=head2 throw()
+
+Throws a L<Nick::Error> exception.
+
+    Nick::StandardBase -> throw( 'fatal error' );
+
+=head2 caller_throw()
+
+Throws an L<Nick::Error> exception as if it came from the caller of the current code.
+
+    Nick::StandardBase -> caller_throw( 'fatal error' );
+
+The caller depth can be adjusted with the option second argument.
+
+    Nick::StandardBase -> caller_throw( 'fatal error', 1 );
+
+Subsequent arguments will be treated as a hash that the L<Nick::Error> exception will be instantiated with.
+
+    Nick::StandardBase -> caller_throw( 'fatal error', 0, '-type' => 'timeout' );
+
+=head2 dump_caller()
+
+Iterates throw the callers of the current code, logging each with L<Nick::Log>.
+
+    Nick::StandardBase -> dump_caller()
+
+=head2 eval_require()
+
+Attempts to require the module in the supplied string, returns the string successful, otherwise throws a L<Nick::Error> exception.
+
+    my $uri = Nick::StandardBase -> eval_require( 'URI' ) -> new();
+
+=cut
+
 sub _log {
     return(
         $LOG || do {
