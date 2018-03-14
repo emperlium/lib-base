@@ -14,6 +14,79 @@ $Error::ObjectifyCallback = sub {
     );
 };
 
+=pod
+
+=head1 NAME
+
+Nick::Error - Inherits from and extends CPAN L<Error> module.
+
+=head1 SYNOPSIS
+
+    use 'Nick::Error' ':try'
+
+    try {
+        Nick::Error -> throw( 'error text' );
+    } catch Nick::Error with {
+        ( $error ) = @_;
+        print $error -> stringify();
+        $error -> rethrow( 'uhoh' );
+    };
+
+=head1 METHODS
+
+=head2 rethrow()
+
+Rethrows the current error, adding to the error message.
+
+    $error -> rethrow( 'unable to blah' );
+
+=head2 do_eval()
+
+Eval given string, any errors are converted to an exception.
+
+    Nick::Error -> do_eval( '1/0' );
+
+=head2 die_throw()
+
+Parse error message from a trapped die and throw as an exception.
+
+Optionally supply text to prefix the error message.
+
+    Nick::Error -> die_throw( $@, 'extra text' );
+
+=head2 strings()
+
+Convert error to die type string.
+
+    printf "error: %s\n", $error -> strings();
+
+=head2 text()
+
+Get or set the text of an error.
+
+    $error -> text( 'error message' );
+    printf "error: %s\n", $error -> text();
+
+=head2 type()
+
+Get the type of an error.
+
+    $error -> text( 'error message' );
+
+=head2 error()
+
+Log the error using Nick::Log.
+
+Optionally supply text to prefix the error message.
+
+    try {
+        Nick::Error -> throw( 'error text' );
+    } catch Nick::Error with {
+        $_[0] -> error( 'extra text' );
+    };
+
+=cut
+
 sub new {
     my $self = shift;
     my $text = shift;
