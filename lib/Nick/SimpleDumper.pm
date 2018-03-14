@@ -7,6 +7,26 @@ use base 'Exporter';
 
 our @EXPORT_OK = qw( sdump );
 
+=pod
+
+=head1 NAME
+
+Nick::SimpleDumper - Convert complex data sctructure into a string..
+
+=head1 SYNOPSIS
+
+    use Nick::SimpleDumper 'sdump';
+
+    my $data = {
+        'array' => [ 1 .. 3 ],
+        'scalar' => 'text',
+        'ref' => \do{ 'scalar ref' }
+    };
+
+    print sdump( $data ), "\n";
+
+=cut
+
 sub sdump {
     if (
         ! @_
