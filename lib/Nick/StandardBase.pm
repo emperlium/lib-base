@@ -3,11 +3,8 @@ package Nick::StandardBase;
 use strict;
 use warnings;
 
-our( $VERSION, $LOG );
-
-BEGIN {
-    $VERSION = '1.00';
-}
+our $VERSION = '1.00';
+our $LOG;
 
 =pod
 
