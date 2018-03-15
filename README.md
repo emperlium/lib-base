@@ -1,4 +1,4 @@
-# base-libs
+# lib-base
 
 Base libraries needed by many of the repositories in this account.
 
