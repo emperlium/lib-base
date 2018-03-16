@@ -11,7 +11,7 @@ our @EXPORT_OK = qw( sdump );
 
 =head1 NAME
 
-Nick::SimpleDumper - Convert complex data sctructure into a string..
+Nick::SimpleDumper - Convert complex data sctructure into a string.
 
 =head1 SYNOPSIS
 
