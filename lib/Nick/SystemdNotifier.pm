@@ -11,6 +11,31 @@ $| = 1;
 
 our( @ISA, $SYSTEMD );
 
+=pod
+
+=head1 NAME
+
+Nick::SystemdNotifier - Adds systemd notification for daemons.
+
+=head1 SYNOPSIS
+
+    package ExampleClass;
+
+    use Nick::SystemdNotifier;
+
+    Nick::SystemdNotifier -> run( 'ExampleClass', 'arg1', 'arg2' );
+
+    sub run {
+        my( $class, @args ) = @_;
+        # behave as a daemon
+    }
+
+    sub started {
+        # code to run on startup
+    }
+
+=cut
+
 sub run {
     my( $class, $base, @args ) = @_;
     exists( $ENV{'NOTIFY_SOCKET'} )
