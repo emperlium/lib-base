@@ -31,7 +31,7 @@ Nick::SystemdNotifier - Adds systemd notification for daemons.
     }
 
     sub started {
-        # code to run on startup
+        # call when daemon is operating
     }
 
 =cut
