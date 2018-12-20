@@ -7,6 +7,8 @@ use base 'Nick::StandardBase';
 
 use IO::Socket::UNIX;
 
+use Nick::Log;
+
 $| = 1;
 
 our( @ISA, $SYSTEMD );
@@ -40,6 +42,7 @@ sub run {
     my( $class, $base, @args ) = @_;
     exists( $ENV{'NOTIFY_SOCKET'} )
         or return $base -> run( @args );
+    Nick::Log -> instance( 'date' => 0 );
     my $socket = $ENV{'NOTIFY_SOCKET'};
     substr( $socket, 0, 1 ) eq '@'
         and substr( $socket, 0, 1 ) = "\0";
