@@ -132,7 +132,7 @@ sub _new_instance {
 sub AUTOLOAD {
     my( $self, @msg ) = @_;
     return(
-        exists( $METHODS{$AUTOLOAD} )
+        $AUTOLOAD && exists( $METHODS{$AUTOLOAD} )
         ? &{ $METHODS{$AUTOLOAD} }( @msg )
         : undef
     );
