@@ -71,7 +71,7 @@ Get or set the text of an error.
 
 Get the type of an error.
 
-    $error -> text( 'error message' );
+    printf "type: %s\n", $error -> type();
 
 =head2 error()
 
