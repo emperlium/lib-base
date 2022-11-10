@@ -74,4 +74,12 @@ sub status {
         );
 }
 
+sub stopping {
+    my( $class ) = @_;
+    $SYSTEMD -> print( 'STOPPING=1' )
+        or $class -> throw(
+            'Unable to send stopping to systemd socket ' . $!
+        );
+}
+
 1;
