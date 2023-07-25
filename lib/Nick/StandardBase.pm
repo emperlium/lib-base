@@ -162,4 +162,25 @@ sub eval_require {
     return $_[1];
 }
 
+sub dump_methods {
+    my( $self, $obj ) = @_;
+    my $class = ref( $obj ) ? ref( $obj ) : $obj;
+    require Class::Inspector;
+    $_[0] -> _log();
+    $LOG -> log( 'Class: ' . $class );
+    for (
+        sort { $$a[2] cmp $$b[2] } @{
+            Class::Inspector -> methods(
+                $class => 'expanded'
+            )
+        }
+    ) {
+        $LOG -> log(
+            '  ' . $$_[2] . (
+                $$_[1] eq $class ? '' : " ($$_[1])"
+            )
+        );
+    }
+}
+
 1;
