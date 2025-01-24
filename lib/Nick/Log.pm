@@ -131,6 +131,7 @@ sub _new_instance {
 
 sub AUTOLOAD {
     my( $self, @msg ) = @_;
+    substr $AUTOLOAD, 0, rindex( $AUTOLOAD, ':' ) + 1, '';
     return(
         $AUTOLOAD && exists( $METHODS{$AUTOLOAD} )
         ? &{ $METHODS{$AUTOLOAD} }( @msg )
@@ -141,9 +142,8 @@ sub AUTOLOAD {
 sub reset_handlers {
     my( $self ) = @_;
     my $handler = $$self{'output_handler'};
-    my $prefix = ref( $self ) . '::';
     for ( @LEVELS ) {
-        $METHODS{ $prefix . $_ } = &$handler( $_ );
+        $METHODS{$_} = &$handler( $_ );
     }
 }
 
@@ -152,9 +152,7 @@ sub set_type_handler {
         or Nick::Error -> throw(
             "Handler for type '$_[1]' should be a callback"
         );
-    $METHODS{
-        ref( $_[0] ) . '::' . $_[1]
-    } = $_[2];
+    $METHODS{ $_[1] } = $_[2];
 }
 
 sub reset_output_method {
